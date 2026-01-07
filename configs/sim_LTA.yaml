@@ -1,0 +1,59 @@
+meta:
+  version: 1
+  random_seed: 42
+
+paths:
+  inp_path: "data/raw/L-TOWN-A/L-TOWN_AreaA.inp"
+  output_dir: "data/simulate/L-TOWN-A"
+
+simulation:
+  start_datetime: "2018-01-02 00:00" # 务必为周一零点，以便和inp文件中的pattern对齐（如果用水需求不涉及周模式则无所谓）
+  duration_days: 7
+  warmup_days: 0
+  timestep_min: 5
+  solver:
+    headloss: "Hazen-Williams"
+    accuracy: 0.001
+    trials: 60
+    unbalanced: {mode: "Continue", trials: 10}
+
+sensors: # 传感器id
+  pressure_node_ids: ['n54', 'n105', 'n114', 'n163', 'n188', 'n229', 'n288', 'n296', 'n332', 'n342', 'n410', 'n415', 'n429', 'n458', 'n469', 'n495', 'n506', 'n516', 'n519', 'n549', 'n613', 'n636', 'n644', 'n679', 'n722', 'n726', 'n740', 'n752', 'n769']
+
+noise_switches:
+  structure: true
+  pattern_profile: true
+  demand: true
+  sensors: true
+
+structure_noise: # 结构参数，仅在每次仿真时刷新
+  diameters:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.015, clip: [0.97, 1.03]}
+  roughness:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.02, clip: [0.95, 1.05]}
+  minor_loss:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.02, clip: [0.97, 1.03]}
+  prv_setpoint:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.018, clip: [0.97, 1.03]}
+
+pattern_profile: # 用水需求模式
+  weekend_factor:
+    dist: {name: "constant", value: 1.0} # 周末因子，本模型中不起作用
+  global_scale:
+    dist: {name: "uniform", low: 0.98, high: 1.02}
+    refresh_every_minutes: 720
+
+demand_noise: # 节点级用水需求
+  node_multiplier:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.03, clip: [0.92, 1.08]}
+    refresh_every_minutes: 60
+  spatial_smoothing:
+    hops: 1
+    mix_weight: 0.2
+
+sensors_noise: # 传感器测量噪声，每次取值时刷新
+  multiplicative_noise_rel:
+    dist: {name: "trunc_normal", mu: 1.0, sigma: 0.00025, clip: [0.997, 1.003]} # 默认值
+  quantization_head_m: 0.0
+  missing_rate: 0.0
+

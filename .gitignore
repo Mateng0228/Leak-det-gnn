@@ -1,0 +1,15 @@
+.vscode/
+__pycache__/
+
+!data/
+data/**
+!data/raw/
+!data/raw/**/
+!data/raw/**/*.inp
+
+results/
+
+*.png
+*.log
+
+hello_world.py

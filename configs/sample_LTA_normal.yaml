@@ -1,0 +1,18 @@
+sampling: # 数据采样配置
+  reconstructor:
+    buckets:
+      time_of_day: ["night", "morning_peak", "midday", "evening_peak", "late_evening"]
+      time_of_day_boundaries:
+        night: ["00:00", "06:00"]
+        morning_peak: ["06:00", "09:00"]
+        midday: ["09:00", "16:00"]
+        evening_peak: ["16:00", "20:00"]
+        late_evening: ["20:00", "24:00"]
+      day_of_week: ["weekday", "weekend"]
+    per_bucket: 40
+    min_gap_minutes: 60
+  predictor:
+    window_T: 3
+    label_offset: 1
+    max_samples: 270
+    stride_minutes: 15
